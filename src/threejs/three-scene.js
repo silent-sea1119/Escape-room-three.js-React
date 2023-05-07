@@ -14,7 +14,6 @@ class ThreeScene extends Component {
 	loader = new GLTFLoader();
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
-	boundingObj = new THREE.Object3D();
 	previousCameraPos = new THREE.Vector3(0, 3, 0);
 	viewObjectFlag = false;
 
@@ -80,12 +79,11 @@ class ThreeScene extends Component {
 		// this.scene.add(axes);
 
 		// Room
-		this.loader.load("Finalscene3.gltf", (gltf) => {
+		this.loader.load("FinalScene3.gltf", (gltf) => {
 			const model = gltf.scene;
 			const animations = gltf.animations;
 
-			console.log(animations)
-			this.boundingObj = gltf.scene.getObjectByName("Cube001_1");
+			console.log(animations);
 
 			{
 				const mixer = new AnimationMixer(gltf.scene.getObjectByName("Base001"));
@@ -171,12 +169,14 @@ class ThreeScene extends Component {
 			// console.log(model);
 		});
 
-		// Temp-Cube
-		const geometry = new THREE.BoxGeometry();
+		// camera bound cylinder
+		const geometry = new THREE.CylinderGeometry();
 		const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-		const cube = new THREE.Mesh(geometry, material);
-		cube.position.set(-4, 2, 5);
-		this.scene.add(cube);
+		const cameraBoundCylinder = new THREE.Mesh(geometry, material);
+		cameraBoundCylinder.position.set(0, 2.6, 0);
+		cameraBoundCylinder.scale.set(5, 5, 5);
+		cameraBoundCylinder.visible = false;
+		this.scene.add(cameraBoundCylinder);
 
 		// Controls
 		this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -251,15 +251,15 @@ class ThreeScene extends Component {
 			//################
 
 			// Get the position of the 3D object in the viewport
-			var position = new THREE.Vector3();
-			position.setFromMatrixPosition(cube.matrixWorld);
-			position.project(this.camera);
+			// var position = new THREE.Vector3();
+			// position.setFromMatrixPosition(cube.matrixWorld);
+			// position.project(this.camera);
 
 			// Convert the position to CSS coordinates
-			var widthHalf = 0.5 * this.renderer.getContext().canvas.width;
-			var heightHalf = 0.5 * this.renderer.getContext().canvas.height;
-			position.x = (position.x * widthHalf) + widthHalf;
-			position.y = -(position.y * heightHalf) + heightHalf;
+			// var widthHalf = 0.5 * this.renderer.getContext().canvas.width;
+			// var heightHalf = 0.5 * this.renderer.getContext().canvas.height;
+			// position.x = (position.x * widthHalf) + widthHalf;
+			// position.y = -(position.y * heightHalf) + heightHalf;
 
 			this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 			this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -336,74 +336,79 @@ class ThreeScene extends Component {
 		// });
 
 		canvas.addEventListener("wheel", (event) => {
-			// Get the camera's position as a vector
-			const cameraPosition = new THREE.Vector3();
-			this.camera.getWorldPosition(cameraPosition);
+			if (!this.viewObjectFlag) {
+				// Get the camera's position as a vector
+				const cameraPosition = new THREE.Vector3();
+				this.camera.getWorldPosition(cameraPosition);
 
-			// Get the bounding box of the object
-			const boundingBox = new THREE.Box3().setFromObject(this.boundingObj);
+				// Get the bounding box of the object
+				const boundingBox = new THREE.Box3().setFromObject(cameraBoundCylinder);
 
-			// Check if the camera position is inside the bounding box
-			if (boundingBox.containsPoint(cameraPosition) && !this.viewObjectFlag) {
-				// Collision detected between the camera and the object
-				this.camera.getWorldPosition(this.previousCameraPos);
-				this.orbitControls.enabled = true;
-				const delta = - event.deltaY * 0.001; // forward: -100, backward: +100
-				// console.log(this.camera.position);
-				// this.camera.position.add(this.raycaster.ray.direction.clone());
-				moveforward(delta);
+				// Check if the camera position is inside the bounding box
+				if (boundingBox.containsPoint(cameraPosition)) {
+					// Collision detected between the camera and the object
+					this.camera.getWorldPosition(this.previousCameraPos);
+					this.orbitControls.enabled = true;
+					const delta = - event.deltaY * 0.001; // forward: -100, backward: +100
+					// console.log(this.camera.position);
+					// this.camera.position.add(this.raycaster.ray.direction.clone());
+					moveforward(delta);
 
-				// console.log(delta);
-			} else {
-				this.orbitControls.enabled = false;
-				// console.log(this.previousCameraPos);
-				gsap.to(this.camera.position, {
-					duration: 0, x: this.previousCameraPos.x, y: this.previousCameraPos.y, z: this.previousCameraPos.z, onComplete: () => {
-						this.orbitControls.enabled = true;
-					}
-				});
-				
-				this.orbitControls.target.add(this.previousCameraPos.clone().sub(this.camera.position));
+					// console.log(delta);
+				} else {
+					this.orbitControls.enabled = false;
+					// console.log(this.previousCameraPos);
+					gsap.to(this.camera.position, {
+						duration: 0, x: this.previousCameraPos.x, y: this.previousCameraPos.y, z: this.previousCameraPos.z, onComplete: () => {
+							this.orbitControls.enabled = true;
+						}
+					});
+					
+					this.orbitControls.target.add(this.previousCameraPos.clone().sub(this.camera.position));
+				}
 			}
+			
 		});
 
 		canvas.addEventListener("mousemove", (event) => {
-			// Get the camera's position as a vector
-			const cameraPosition = new THREE.Vector3();
-			this.camera.getWorldPosition(cameraPosition);
+			if (!this.viewObjectFlag) {
+				// Get the camera's position as a vector
+				const cameraPosition = new THREE.Vector3();
+				this.camera.getWorldPosition(cameraPosition);
 
-			// Get the bounding box of the object
-			const boundingBox = new THREE.Box3().setFromObject(this.boundingObj);
+				// Get the bounding box of the object
+				const boundingBox = new THREE.Box3().setFromObject(cameraBoundCylinder);
 
-			// Check if the camera position is inside the bounding box
-			if (boundingBox.containsPoint(cameraPosition) && !this.viewObjectFlag) {
-				// Collision detected between the camera and the object
-				this.camera.getWorldPosition(this.previousCameraPos);
-				this.orbitControls.enabled = true;
-				// console.log(this.raycaster.ray.direction);
-				this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-				this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-				this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
+				// Check if the camera position is inside the bounding box
+				if (boundingBox.containsPoint(cameraPosition) && !this.viewObjectFlag) {
+					// Collision detected between the camera and the object
+					this.camera.getWorldPosition(this.previousCameraPos);
+					this.orbitControls.enabled = true;
+					// console.log(this.raycaster.ray.direction);
+					this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+					this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+					this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
 
-				// const intersects = this.raycaster.intersectObjects(this.scene.children);
-				// if (intersects.length > 0) {
-				// 	console.log(intersects);
-				// }
+					// const intersects = this.raycaster.intersectObjects(this.scene.children);
+					// if (intersects.length > 0) {
+					// 	console.log(intersects);
+					// }
 
-			} else {
-				this.orbitControls.enabled = false;
-				// console.log(this.previousCameraPos);
-				this.orbitControls.enabled = false;
-				gsap.to(this.camera.position, {
-					duration: 0, x: this.previousCameraPos.x, y: this.previousCameraPos.y, z: this.previousCameraPos.z, onComplete: () => {
-						this.orbitControls.enabled = true;
-					}
-				});
-				
-				this.orbitControls.target.add(this.previousCameraPos.clone().sub(this.camera.position));
+				} else {
+					this.orbitControls.enabled = false;
+					// console.log(this.previousCameraPos);
+					this.orbitControls.enabled = false;
+					gsap.to(this.camera.position, {
+						duration: 0, x: this.previousCameraPos.x, y: this.previousCameraPos.y, z: this.previousCameraPos.z, onComplete: () => {
+							this.orbitControls.enabled = true;
+						}
+					});
+					
+					this.orbitControls.target.add(this.previousCameraPos.clone().sub(this.camera.position));
+				}
+				// this.mouse.set(0, 0);
+				// console.log(this.mouse);
 			}
-			// this.mouse.set(0, 0);
-			// console.log(this.mouse);
 		});
 
 	}
