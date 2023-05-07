@@ -1,0 +1,11 @@
+Model Information:
+* title:	Trandafir - WeaponCraft 2023
+* source:	https://sketchfab.com/3d-models/trandafir-weaponcraft-2023-bf26b804989f4f86adbe99de21274d6a
+* author:	Petru Grati (https://sketchfab.com/einmeister5)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Trandafir - WeaponCraft 2023" (https://sketchfab.com/3d-models/trandafir-weaponcraft-2023-bf26b804989f4f86adbe99de21274d6a) by Petru Grati (https://sketchfab.com/einmeister5) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
