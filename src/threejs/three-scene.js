@@ -195,19 +195,6 @@ class ThreeScene extends Component {
 				mixer.update(delta);
 			}
 
-			// const intersects = this.raycaster.intersectObjects(
-			//   this.scene.children,
-			//   true
-			// );
-
-			// if (intersects.length > 0) {
-			//   intersects[0].object.material.color.set(0xff0000);
-			//   // console.log(intersects[0].object);
-			// }
-
-			//zoomin
-
-
 			this.renderer.render(this.scene, this.camera);
 		};
 		animate();
@@ -239,27 +226,6 @@ class ThreeScene extends Component {
 
 		// Create a new DOM element for the popup
 		window.addEventListener("click", (event) => {
-			//########
-			// var popup = document.createElement('div');
-			// popup.style.position = 'absolute';
-			// popup.style.width = '200px';
-			// popup.style.height = '100px';
-			// popup.style.backgroundColor = 'white';
-			// popup.style.border = '1px solid black';
-			// popup.style.padding = '10px';
-			// popup.innerText = 'popup';
-			//################
-
-			// Get the position of the 3D object in the viewport
-			// var position = new THREE.Vector3();
-			// position.setFromMatrixPosition(cube.matrixWorld);
-			// position.project(this.camera);
-
-			// Convert the position to CSS coordinates
-			// var widthHalf = 0.5 * this.renderer.getContext().canvas.width;
-			// var heightHalf = 0.5 * this.renderer.getContext().canvas.height;
-			// position.x = (position.x * widthHalf) + widthHalf;
-			// position.y = -(position.y * heightHalf) + heightHalf;
 
 			this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 			this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -304,23 +270,6 @@ class ThreeScene extends Component {
 				}
 			}
 
-			// Set the position of the popup
-			//#############
-			// popup.style.left = position.x + 'px';
-			// popup.style.top = position.y + 'px';
-			//###################
-
-			//#############
-			// let closeButton = popup.document.createElement("button");
-			// closeButton.innerHTML = "Close Popup";
-			// closeButton.addEventListener("click", function () {
-			//   popup.close();
-			// });
-			//##################
-
-			// Add the popup to the document body
-			// document.body.appendChild(popup);
-			// document.body.appendChild(closeButton);//##
 		})
 
 		window.addEventListener("resize", () => {
